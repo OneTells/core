@@ -6,7 +6,7 @@ from loguru import logger as _logger
 from .modules import *
 from .modules.logger.handlers.telegram import Telegram
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 
 def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
