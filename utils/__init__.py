@@ -1,7 +1,7 @@
-import os
-from sys import stderr
+import os as _os
+from sys import stderr as _stderr
 
-from loguru import logger
+from loguru import logger as _logger
 
 from .modules import *
 from .modules.logger.handlers.telegram import Telegram
@@ -10,21 +10,21 @@ __version__ = "1.0.5"
 
 
 def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
-    logger.add(
-        stderr, level="INFO",
+    _logger.add(
+        _stderr, level="INFO",
         format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
         filter=lambda x: 'context' in x['extra'],
         backtrace=True, diagnose=True
     )
 
-    logger.add(
+    _logger.add(
         Telegram(token, chat_id), level='WARNING',
         filter=lambda x: 'unit' in x['extra']
     )
 
-    os.makedirs(path, exist_ok=True)
+    _os.makedirs(path, exist_ok=True)
 
-    logger.add(
+    _logger.add(
         f'{path}/info.log', level='INFO',
         format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
         filter=lambda x: 'context' in x['extra'],
@@ -32,7 +32,7 @@ def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
         compression='tar.xz', retention='10 days', rotation='100 MB'
     )
 
-    logger.add(
+    _logger.add(
         f'{path}/debug.log', level='DEBUG',
         format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
         filter=lambda x: 'context' in x['extra'],
@@ -41,7 +41,7 @@ def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
     )
 
 
-logger.disable('utils')
+_logger.disable('utils')
 
 __all__ = (
     '__version__',
