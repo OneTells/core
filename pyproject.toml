@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 
 dependencies = [
-    "SQLAlchemy", "setuptools", "pydantic", "asyncpg", "loguru", "requests", "aiohttp"
+    "SQLAlchemy", "pydantic", "asyncpg", "loguru", "requests", "aiohttp"
 ]
 
 dynamic = ["version"]
@@ -20,3 +20,6 @@ Repository = "https://github.com/OneTells/utils"
 
 [tool.setuptools.dynamic]
 version = { attr = "utils.__version__" }
+
+[tool.setuptools.packages]
+utils = { include = "utils" }
