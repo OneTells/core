@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 
 dependencies = [
-    "SQLAlchemy", "setuptools", "pydantic", "asyncpg", "loguru", "requests", "aiohttp", "uvloop"
+    "SQLAlchemy", "setuptools", "pydantic", "asyncpg", "loguru", "requests", "aiohttp"
 ]
 
 dynamic = ["version"]
