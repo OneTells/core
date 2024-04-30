@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "utils"
+description = "Ядро для проектов"
 authors = [{ name = "OneTells", email = "OneTells@ya.ru" }]
 readme = "README.md"
 requires-python = ">=3.12"
