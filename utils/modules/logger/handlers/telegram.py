@@ -13,7 +13,7 @@ class Telegram:
         self.__token = token
         self.__chat_id = chat_id
 
-    def __call__(self, message: loguru.Message) -> None:
+    def __call__(self, message: "loguru.Message") -> None:
         if not self.__flood_control.add():
             return
 
