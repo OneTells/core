@@ -3,9 +3,10 @@ from sys import stderr
 
 from loguru import logger
 
-from utils.modules.logger.handlers.telegram import Telegram
+from .modules import *
+from .modules.logger.handlers.telegram import Telegram
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 
 def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
@@ -41,3 +42,8 @@ def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
 
 
 logger.disable('utils')
+
+__all__ = (
+    '__version__',
+    "add_logger_handlers"
+)
