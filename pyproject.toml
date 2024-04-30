@@ -22,4 +22,4 @@ Repository = "https://github.com/OneTells/utils"
 version = { attr = "utils.__version__" }
 
 [tool.setuptools.packages]
-utils = { include = "utils" }
+find = {}
