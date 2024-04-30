@@ -15,7 +15,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Repository = "https://github.com/OneTells/core"
+Repository = "https://github.com/OneTells/utils"
 
 [tool.setuptools.dynamic]
-version = { attr = "core.__version__" }
+version = { attr = "utils.__version__" }
