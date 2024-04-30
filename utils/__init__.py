@@ -5,7 +5,7 @@ from loguru import logger
 
 from utils.modules.logger.handlers.telegram import Telegram
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
@@ -40,4 +40,4 @@ def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
     )
 
 
-logger.disable('core')
+logger.disable('utils')
