@@ -1,0 +1,2 @@
+class ReloadTrigger(Exception):
+    pass
