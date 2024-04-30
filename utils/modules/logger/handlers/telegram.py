@@ -1,8 +1,9 @@
+import loguru
 import requests
-from loguru import Message, logger
 from requests import RequestException
 
 from utils.general.utils.counter import FloodControl
+from utils.modules.database.objects.logger import logger
 
 
 class Telegram:
@@ -12,7 +13,7 @@ class Telegram:
         self.__token = token
         self.__chat_id = chat_id
 
-    def __call__(self, message: Message) -> None:
+    def __call__(self, message: loguru.Message) -> None:
         if not self.__flood_control.add():
             return
 
