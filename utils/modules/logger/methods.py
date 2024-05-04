@@ -16,7 +16,7 @@ def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
 
     logger.add(
         Telegram(token, chat_id), level='WARNING',
-        filter=lambda x: 'unit' in x['extra']
+        filter=lambda x: 'context' in x['extra']
     )
 
     os.makedirs(path, exist_ok=True)
