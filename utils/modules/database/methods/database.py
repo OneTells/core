@@ -73,5 +73,5 @@ class Database:
         await cls.__execute(Compiler.compile_query(query), connection)
 
     @classmethod
-    async def transaction(cls) -> Transaction:
+    def transaction(cls) -> Transaction:
         return Transaction()
