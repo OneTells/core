@@ -8,4 +8,4 @@ class Setting:
     timeout: float
     executor_count: int
     limited_args: LimitArgs | None = None
-    timeout_reset: int = 180
+    timeout_reset: float = 180
