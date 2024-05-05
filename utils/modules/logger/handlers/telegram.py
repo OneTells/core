@@ -19,7 +19,7 @@ class Telegram:
 
         text = (
             f'{message.record['level'].name.upper()} | '
-            f'<{', '.join(f'{e=}' for e in message.record['extra'].values())}> | '
+            f'<{', '.join(f'{key}={element}' for key, element in message.record['extra'].items())}> | '
             f'{message.record['message'] or "..."}'
         )
 
