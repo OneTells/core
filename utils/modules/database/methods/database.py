@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from utils.modules.database.exceptions.database import ExecuteError, TooManyRecords
 from utils.modules.database.methods.compiler import Compiler
 from utils.modules.database.methods.pool import DatabasePool
+from utils.modules.database.methods.transaction import Transaction
 from utils.modules.database.schemes.database import Query, T, Result as Res
 
 
@@ -36,7 +37,8 @@ class Database:
             return await cls.__execute(compiled_query, connection, depth + 1)
 
     @classmethod
-    async def fetch(cls, query: Query, *, model: type[T] | Call[[Rec], Res] = None, connection: Con = None) -> list[Rec | Res | T]:
+    async def fetch(cls, query: Query, *, model: type[T] | Call[[Rec], Res] = None, connection: Con = None) -> list[
+        Rec | Res | T]:
         result = await cls.__fetch(Compiler.compile_query(query), connection)
 
         if model is None:
@@ -48,7 +50,8 @@ class Database:
         return list(map(model, result))
 
     @classmethod
-    async def fetch_one(cls, query: Query, *, model: type[T] | Call[[Rec], Res] = None, connection: Con = None) -> Rec | Res | T | None:
+    async def fetch_one(cls, query: Query, *, model: type[T] | Call[[Rec], Res] = None,
+                        connection: Con = None) -> Rec | Res | T | None:
         result = await cls.__fetch(compiled_query := Compiler.compile_query(query), connection)
 
         if len(result) == 0:
@@ -68,3 +71,7 @@ class Database:
     @classmethod
     async def execute(cls, query: Query, connection: Con = None) -> None:
         await cls.__execute(Compiler.compile_query(query), connection)
+
+    @classmethod
+    async def transaction(cls) -> Transaction:
+        return Transaction()
