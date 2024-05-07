@@ -1,7 +1,7 @@
 from time import perf_counter_ns
 from typing import Callable, Any
 
-from utils.modules.database.objects.logger import logger
+from utils.modules.logger.objects import logger
 
 
 def timer(*, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0) -> float:

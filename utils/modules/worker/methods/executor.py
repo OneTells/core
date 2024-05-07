@@ -7,7 +7,7 @@ from multiprocessing.managers import ValueProxy
 from signal import signal, SIGTERM, SIGINT, SIG_IGN, default_int_handler
 from typing import Any, AsyncIterator
 
-from utils.modules.database.objects.logger import logger
+from utils.modules.logger.objects import logger
 from utils.modules.worker.schemes.executor import ExecutorData, ExecutorProcessData
 
 try:

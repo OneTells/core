@@ -3,7 +3,7 @@ import requests
 from requests import RequestException
 
 from utils.general.utils.counter import FloodControl
-from utils.modules.database.objects.logger import logger
+from utils.modules.logger.objects import logger
 
 
 class Telegram:
