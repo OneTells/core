@@ -135,7 +135,7 @@ class Trigger:
                 )
                 return False
         except Exception as error:
-            self.__logger.exception(str(error))
+            self.__logger.exception(str(error) or ' ')
             self.__logger.error('Ошибка при проверке настроек триггера')
             return False
 
@@ -171,7 +171,7 @@ class Trigger:
         except Exception as error:
             _ = error
 
-            self.__logger.exception()
+            self.__logger.exception(' ')
             self.__logger.error('Ошибка при выполнении функции триггера')
             return False
 

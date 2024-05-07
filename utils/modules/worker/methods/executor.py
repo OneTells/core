@@ -66,7 +66,7 @@ class Executor:
                 except Exception as error:
                     _ = error
 
-                    self.__logger.exception()
+                    self.__logger.exception(' ')
                     self.__logger.error(f'Ошибка при выполнении исполнителя. Аргументы: {args}')
 
                 self.__executor_data.set_finish_work()
