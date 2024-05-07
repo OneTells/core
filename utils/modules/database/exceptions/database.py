@@ -5,7 +5,6 @@ class DatabaseException(Exception):
 
     def __init__(self, *args, **kwargs) -> None:
         self.message = kwargs.get('message', None) or 'Ошибка при работе с database'
-        super().__init__(self.message)
 
         if kwargs.get('use_logger', True):
             logger.error(self.message)
