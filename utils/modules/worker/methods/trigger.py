@@ -197,7 +197,7 @@ class Trigger:
 
         while True:
             await self.__startup()
-            self.__logger.info('Триггер запушен')
+            self.__logger.debug('Триггер запушен')
 
             if is_reload:
                 self.__logger.warning('Триггер перезагружен')
