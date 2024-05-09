@@ -21,9 +21,9 @@ class DatabasePool:
             command_timeout=60
         )
 
-        logger.info(f'База данных подключена')
+        logger.debug(f'База данных подключена')
 
     @classmethod
     async def disconnect(cls) -> None:
         await cls.__pool.close()
-        logger.info('База данных отключена')
+        logger.debug('База данных отключена')

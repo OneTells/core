@@ -37,8 +37,14 @@ class Database:
             return await cls.__execute(compiled_query, connection, depth + 1)
 
     @classmethod
-    async def fetch(cls, query: Query, *, model: type[T] | Call[[Rec], Res] = None, connection: Con = None) -> list[
-        Rec | Res | T]:
+    async def fetch(
+            cls,
+            query: Query,
+            *,
+            model: type[T] | Call[[Rec], Res] = None,
+            connection: Con = None
+    ) -> list[Rec | Res | T]:
+
         result = await cls.__fetch(Compiler.compile_query(query), connection)
 
         if model is None:
@@ -50,8 +56,14 @@ class Database:
         return list(map(model, result))
 
     @classmethod
-    async def fetch_one(cls, query: Query, *, model: type[T] | Call[[Rec], Res] = None,
-                        connection: Con = None) -> Rec | Res | T | None:
+    async def fetch_one(
+            cls,
+            query: Query,
+            *,
+            model: type[T] | Call[[Rec], Res] = None,
+            connection: Con = None
+    ) -> Rec | Res | T | None:
+
         result = await cls.__fetch(compiled_query := Compiler.compile_query(query), connection)
 
         if len(result) == 0:
