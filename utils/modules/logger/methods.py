@@ -4,9 +4,13 @@ from sys import stderr
 from loguru import logger
 
 from .handlers.telegram import Telegram
+from .schemes import TelegramData
 
 
-def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
+def enable_logger(path: str, telegram_data: TelegramData = None) -> None:
+    logger.enable('utils')
+
+    logger.remove()
     logger.add(
         stderr, level="INFO",
         format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
@@ -14,10 +18,11 @@ def add_logger_handlers(path: str, token: str, chat_id: int) -> None:
         backtrace=True, diagnose=True
     )
 
-    logger.add(
-        Telegram(token, chat_id), level='WARNING',
-        filter=lambda x: 'context' in x['extra']
-    )
+    if telegram_data is not None:
+        logger.add(
+            Telegram(telegram_data.token, telegram_data.chat_id), level='WARNING',
+            filter=lambda x: 'context' in x['extra']
+        )
 
     os.makedirs(path, exist_ok=True)
 

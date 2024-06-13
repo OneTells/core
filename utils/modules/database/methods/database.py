@@ -38,11 +38,11 @@ class Database:
 
     @classmethod
     async def fetch(
-            cls,
-            query: Query,
-            *,
-            model: type[T] | Call[[Rec], Res] = None,
-            connection: Con = None
+        cls,
+        query: Query,
+        *,
+        model: type[T] | Call[[Rec], Res] = None,
+        connection: Con = None
     ) -> list[Rec | Res | T]:
 
         result = await cls.__fetch(Compiler.compile_query(query), connection)
@@ -57,11 +57,11 @@ class Database:
 
     @classmethod
     async def fetch_one(
-            cls,
-            query: Query,
-            *,
-            model: type[T] | Call[[Rec], Res] = None,
-            connection: Con = None
+        cls,
+        query: Query,
+        *,
+        model: type[T] | Call[[Rec], Res] = None,
+        connection: Con = None
     ) -> Rec | Res | T | None:
 
         result = await cls.__fetch(compiled_query := Compiler.compile_query(query), connection)

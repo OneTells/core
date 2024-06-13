@@ -5,8 +5,8 @@ from sqlalchemy import Update as Update_, Select as Select_, Delete as Delete_
 from sqlalchemy.dialects.postgresql import Insert as _Insert
 from sqlalchemy.sql._typing import _ColumnsClauseArgument as Columns
 
-from utils.modules.database.schemes.database import T, Result
 from utils.modules.database.methods.database import Database
+from utils.modules.database.schemes.database import T, Result
 
 
 class Select(Select_):
@@ -65,7 +65,12 @@ class Insert(_Insert):
     async def returning(self, *cols: Columns, model: None = None, connection: Connection = None) -> Record | None:
         ...
 
-    async def returning(self, *cols: Columns, model: type[T] | Callable[[Record], Result] = None, connection: Connection = None) -> Record | Result | T | None:
+    async def returning(
+        self,
+        *cols: Columns,
+        model: type[T] | Callable[[Record], Result] = None,
+        connection: Connection = None
+    ) -> Record | Result | T | None:
         return await Database.fetch_one(super().returning(*cols), model=model, connection=connection)
 
 

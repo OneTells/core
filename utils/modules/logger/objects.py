@@ -1,3 +1,3 @@
 from loguru import logger as logger_
 
-logger = logger_.bind(context='System')
+logger = logger_.bind(context='system')
