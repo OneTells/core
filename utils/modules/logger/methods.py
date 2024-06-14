@@ -7,7 +7,7 @@ from .handlers.telegram import Telegram
 from .schemes import TelegramData
 
 
-def enable_logger(path: str, telegram_data: TelegramData = None) -> None:
+def enable_logger(path: str = None, telegram_data: TelegramData = None) -> None:
     logger.enable('utils')
 
     logger.remove()
@@ -24,20 +24,21 @@ def enable_logger(path: str, telegram_data: TelegramData = None) -> None:
             filter=lambda x: 'context' in x['extra']
         )
 
-    os.makedirs(path, exist_ok=True)
+    if path is not None:
+        os.makedirs(path, exist_ok=True)
 
-    logger.add(
-        f'{path}/info.log', level='INFO',
-        format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
-        filter=lambda x: 'context' in x['extra'],
-        backtrace=True, diagnose=True, enqueue=True,
-        compression='tar.xz', retention='10 days', rotation='100 MB'
-    )
+        logger.add(
+            f'{path}/info.log', level='INFO',
+            format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
+            filter=lambda x: 'context' in x['extra'],
+            backtrace=True, diagnose=True, enqueue=True,
+            compression='tar.xz', retention='10 days', rotation='100 MB'
+        )
 
-    logger.add(
-        f'{path}/debug.log', level='DEBUG',
-        format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
-        filter=lambda x: 'context' in x['extra'],
-        backtrace=True, diagnose=True, enqueue=True,
-        compression='tar.xz', retention='10 days', rotation='100 MB'
-    )
+        logger.add(
+            f'{path}/debug.log', level='DEBUG',
+            format="<g>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <y>{level}</> | <w>{extra[context]}</> | <c>{message}</>",
+            filter=lambda x: 'context' in x['extra'],
+            backtrace=True, diagnose=True, enqueue=True,
+            compression='tar.xz', retention='10 days', rotation='100 MB'
+        )
