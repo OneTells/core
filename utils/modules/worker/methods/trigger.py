@@ -6,9 +6,9 @@ from multiprocessing import Queue, Array
 from signal import signal, SIGTERM, SIGINT, SIG_IGN, default_int_handler
 
 from _queue import Empty
+from loguru import logger
 
 from utils.modules.database.methods.requests import Select, Insert
-from utils.modules.logger.objects import logger
 from utils.modules.worker.exceptions.trigger import ReloadTrigger
 from utils.modules.worker.methods.executor import ExecutorProcess
 from utils.modules.worker.models.worker import Worker

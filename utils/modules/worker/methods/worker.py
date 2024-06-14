@@ -1,6 +1,7 @@
 from multiprocessing.context import SpawnProcess
 
-from utils.modules.logger.objects import logger
+from loguru import logger
+
 from utils.modules.worker.abstract.worker import BaseWorker
 from utils.modules.worker.methods.trigger import Trigger
 from utils.modules.worker.schemes.worker import WorkerData
