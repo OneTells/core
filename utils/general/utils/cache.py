@@ -26,10 +26,12 @@ class CacheWithTimer:
         self.__function = lru_cache(maxsize=self.__maxsize)(function)
         self.__expiration = perf_counter() + self.__delta
 
+        @wraps(function)
         async def async_wrapper(*args, **kwargs):
             self.__cache_clear()
             return await self.__function(*args, **kwargs)
 
+        @wraps(function)
         def wrapper(*args, **kwargs):
             self.__cache_clear()
             return self.__function(*args, **kwargs)
