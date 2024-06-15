@@ -4,14 +4,14 @@ from requests import RequestException
 
 from utils.general.utils.counter import FloodControl
 from utils.modules.logger.objects import logger
+from utils.modules.logger.schemes import TelegramData
 
 
 class Telegram:
     __flood_control = FloodControl(15, minutes=1)
 
-    def __init__(self, token: str, chat_id: int) -> None:
-        self.__token = token
-        self.__chat_id = chat_id
+    def __init__(self, data: TelegramData) -> None:
+        self.__data = data
 
     def __call__(self, message: "loguru.Message") -> None:
         if not self.__flood_control.add():
@@ -25,8 +25,8 @@ class Telegram:
 
         try:
             requests.get(
-                f'https://api.telegram.org/bot{self.__token}/sendMessage',
-                json={'chat_id': self.__chat_id, 'text': text[:4095]}
+                f'https://api.telegram.org/bot{self.__data.token}/sendMessage',
+                json={'chat_id': self.__data.chat_id, 'text': text[:4095]}
             )
         except RequestException:
             logger.exception(f'Ошибка при отправки логов: {message}')
