@@ -1,5 +1,5 @@
 from asyncio import iscoroutinefunction
-from functools import lru_cache
+from functools import lru_cache, wraps
 from time import perf_counter
 from typing import Callable
 
