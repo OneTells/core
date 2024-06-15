@@ -1,4 +1,5 @@
 from asyncio import iscoroutinefunction
+from functools import wraps
 from time import perf_counter_ns
 from typing import Callable
 
@@ -18,12 +19,15 @@ class Benchmark:
         logger.info(f'{self.__title.format(**kwargs, args=args)} | {delta / 1_000_000:.2f} мс')
 
     def __call__(self, function: Callable):
+
+        @wraps(function)
         async def async_wrapper(*args, **kwargs):
             start = perf_counter_ns()
             result = await function(*args, **kwargs)
             self.__logging(perf_counter_ns() - start, *args, **kwargs)
             return result
 
+        @wraps(function)
         def wrapper(*args, **kwargs):
             start = perf_counter_ns()
             result = function(*args, **kwargs)
