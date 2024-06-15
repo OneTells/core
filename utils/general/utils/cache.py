@@ -1,4 +1,3 @@
-from asyncio import iscoroutinefunction
 from functools import lru_cache, wraps
 from time import perf_counter
 from typing import Callable
@@ -27,13 +26,8 @@ class CacheWithTimer:
         self.__expiration = perf_counter() + self.__delta
 
         @wraps(function)
-        async def async_wrapper(*args, **kwargs):
-            self.__cache_clear()
-            return await self.__function(*args, **kwargs)
-
-        @wraps(function)
         def wrapper(*args, **kwargs):
             self.__cache_clear()
             return self.__function(*args, **kwargs)
 
-        return async_wrapper if iscoroutinefunction(function) else wrapper
+        return wrapper
