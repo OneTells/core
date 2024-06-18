@@ -1,8 +1,8 @@
 from typing import Self
 
 from asyncpg import Pool, create_pool
-from asyncpg.pool import PoolAcquireContext
 
+from utils.modules.database.methods.connection import Connection
 from utils.modules.database.methods.transaction import Transaction
 from utils.modules.database.objects.logger import logger
 from utils.modules.database.schemes.pool import DatabaseData
@@ -34,10 +34,10 @@ class DatabasePool:
         logger.debug(f'База данных {self.__data.name} отключена')
 
     def transaction(self) -> Transaction:
-        return Transaction(self.connection())
+        return Transaction(self.__pool.acquire())
 
-    def connection(self) -> PoolAcquireContext:
-        return self.__pool.acquire()
+    def connection(self) -> Connection:
+        return Connection(self.__pool.acquire())
 
     @classmethod
     async def close_all(cls) -> None:

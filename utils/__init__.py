@@ -3,7 +3,7 @@ from loguru import logger as _logger
 from .modules import *
 from .modules.logger.handlers.telegram import Telegram
 
-__version__ = "1.4.2"
+__version__ = "1.4.3"
 
 _logger.disable('utils')
 
