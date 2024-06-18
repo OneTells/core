@@ -38,9 +38,9 @@ class Database:
     async def fetch(
         cls,
         query: Query,
+        connection: Connection,
         *,
-        model: type[T] | Call[[Rec], Res] = None,
-        connection: Connection
+        model: type[T] | Call[[Rec], Res] = None
     ) -> list[Rec | Res | T]:
         result = await cls.__fetch(Compiler.compile_query(query), connection)
 
@@ -56,9 +56,9 @@ class Database:
     async def fetch_one(
         cls,
         query: Query,
+        connection: Connection,
         *,
-        model: type[T] | Call[[Rec], Res] = None,
-        connection: Connection
+        model: type[T] | Call[[Rec], Res] = None
     ) -> Rec | Res | T | None:
         result = await cls.__fetch(compiled_query := Compiler.compile_query(query), connection)
 
