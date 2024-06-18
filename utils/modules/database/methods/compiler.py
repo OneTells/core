@@ -2,9 +2,9 @@ from sqlalchemy.dialects.postgresql import dialect
 from sqlalchemy.exc import CompileError
 from sqlalchemy.sql.ddl import CreateTable
 
+from utils.modules.database.exceptions.compiler import CompilationError
 from utils.modules.database.objects.database import Base
 from utils.modules.database.schemes.database import Query
-from utils.modules.database.exceptions.compiler import CompilationError
 
 
 class Compiler:

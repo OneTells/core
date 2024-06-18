@@ -12,69 +12,79 @@ from utils.modules.database.schemes.database import T, Result
 class Select(Select_):
 
     @overload
-    async def fetch(self, *, model: type[T]) -> list[T]:
+    async def fetch(self, *, model: type[T], connection: Connection) -> list[T]:
         ...
 
     @overload
-    async def fetch(self, *, model: Callable[[Record], Result]) -> list[Result]:
+    async def fetch(self, *, model: Callable[[Record], Result], connection: Connection) -> list[Result]:
         ...
 
     @overload
-    async def fetch(self, *, model: None = None) -> list[Record]:
+    async def fetch(self, *, model: None = None, connection: Connection) -> list[Record]:
         ...
 
-    async def fetch(self, *, model: type[T] | Callable[[Record], Result] = None) -> list[Record | Result | T]:
-        return await Database.fetch(self, model=model)
+    async def fetch(
+        self,
+        *,
+        model: type[T] | Callable[[Record], Result] = None,
+        connection: Connection
+    ) -> list[Record | Result | T]:
+        return await Database.fetch(self, model=model, connection=connection)
 
     @overload
-    async def fetch_one(self, *, model: type[T]) -> T | None:
+    async def fetch_one(self, *, model: type[T], connection: Connection) -> T | None:
         ...
 
     @overload
-    async def fetch_one(self, *, model: Callable[[Record], Result]) -> Result | None:
+    async def fetch_one(self, *, model: Callable[[Record], Result], connection: Connection) -> Result | None:
         ...
 
     @overload
-    async def fetch_one(self, *, model: None = None) -> Record | None:
+    async def fetch_one(self, *, model: None = None, connection: Connection) -> Record | None:
         ...
 
-    async def fetch_one(self, *, model: type[T] | Callable[[Record], Result] = None) -> Record | Result | T | None:
-        return await Database.fetch_one(self, model=model)
+    async def fetch_one(
+        self,
+        *,
+        model: type[T] | Callable[[Record], Result] = None,
+        connection: Connection
+    ) -> Record | Result | T | None:
+        return await Database.fetch_one(self, model=model, connection=connection)
 
 
 class Update(Update_):
 
-    async def execute(self, connection: Connection = None) -> None:
+    async def execute(self, connection: Connection) -> None:
         await Database.execute(self, connection=connection)
 
 
 class Insert(_Insert):
 
-    async def execute(self, connection: Connection = None) -> None:
+    async def execute(self, connection: Connection) -> None:
         await Database.execute(self, connection=connection)
 
     @overload
-    async def returning(self, *cols: Columns, model: type[T], connection: Connection = None) -> T | None:
+    async def returning(self, *cols: Columns, model: type[T], connection: Connection) -> T | None:
         ...
 
     @overload
-    async def returning(self, *cols: Columns, model: Callable[[Record], Result], connection: Connection = None) -> Result | None:
+    async def returning(self, *cols: Columns, model: Callable[[Record], Result], connection: Connection) -> Result | None:
         ...
 
     @overload
-    async def returning(self, *cols: Columns, model: None = None, connection: Connection = None) -> Record | None:
+    async def returning(self, *cols: Columns, model: None = None, connection: Connection) -> Record | None:
         ...
 
     async def returning(
         self,
         *cols: Columns,
         model: type[T] | Callable[[Record], Result] = None,
-        connection: Connection = None
+        connection: Connection
     ) -> Record | Result | T | None:
         return await Database.fetch_one(super().returning(*cols), model=model, connection=connection)
 
 
 class Delete(Delete_):
 
-    async def execute(self, connection: Connection = None) -> None:
+    async def execute(self, connection: Connection) -> None:
         await Database.execute(self, connection=connection)
