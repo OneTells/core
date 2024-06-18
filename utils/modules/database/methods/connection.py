@@ -1,6 +1,8 @@
 from asyncpg import Connection as Connection_
 from asyncpg.pool import PoolAcquireContext
 
+from utils.modules.logger.objects import logger
+
 
 class Connection:
 
@@ -11,4 +13,5 @@ class Connection:
         return await self.__pool_acquire_context.__aenter__()
 
     async def __aexit__(self, *exc) -> None:
+        logger.info(f'{exc}')
         await self.__pool_acquire_context.__aexit__(*exc)
