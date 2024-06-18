@@ -1,27 +1,22 @@
-from asyncpg import transaction, Connection
-from asyncpg.pool import PoolAcquireContext
+from asyncpg import transaction, Connection as Connection_
 
-from utils.modules.database.methods.pool import DatabasePool
+from utils.modules.database.methods.connection import Connection
 
 
 class Transaction:
 
     def __init__(self) -> None:
-        self.__pool_context: PoolAcquireContext | None = None
+        self.__connection = Connection()
         self.__transaction: transaction.Transaction | None = None
 
-    async def __aenter__(self) -> Connection:
-        self.__pool_context = DatabasePool.get_pool().acquire()
-        await self.__pool_context.__aenter__()
+    async def __aenter__(self) -> Connection_:
+        connection = await self.__connection.__aenter__()
 
-        self.__transaction = self.__pool_context.connection.transaction()
+        self.__transaction = connection.transaction()
         await self.__transaction.__aenter__()
 
-        return self.__pool_context.connection
+        return connection
 
     async def __aexit__(self, *exc) -> None:
         await self.__transaction.__aexit__(*exc)
-        self.__transaction = None
-
-        await self.__pool_context.__aexit__(*exc)
-        self.__pool_context = None
+        await self.__connection.__aexit__(*exc)

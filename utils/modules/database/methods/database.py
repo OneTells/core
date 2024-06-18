@@ -2,11 +2,12 @@ from asyncio import sleep
 from inspect import isclass
 from typing import Callable as Call
 
-from asyncpg import Record as Rec, ConnectionDoesNotExistError, CannotConnectNowError, Connection as Con
+from asyncpg import Record as Rec, ConnectionDoesNotExistError, CannotConnectNowError, Connection as Connection_
 from pydantic import BaseModel
 
 from utils.modules.database.exceptions.database import ExecuteError, TooManyRecords
 from utils.modules.database.methods.compiler import Compiler
+from utils.modules.database.methods.connection import Connection
 from utils.modules.database.methods.pool import DatabasePool
 from utils.modules.database.methods.transaction import Transaction
 from utils.modules.database.schemes.database import Query, T, Result as Res
@@ -15,7 +16,7 @@ from utils.modules.database.schemes.database import Query, T, Result as Res
 class Database:
 
     @classmethod
-    async def __fetch(cls, compiled_query: str, connection: Con = None, depth: int = 0) -> list[Rec]:
+    async def __fetch(cls, compiled_query: str, connection: Connection_ = None, depth: int = 0) -> list[Rec]:
         try:
             return await (connection or DatabasePool.get_pool()).fetch(compiled_query)
         except (CannotConnectNowError, ConnectionDoesNotExistError, ConnectionRefusedError) as error:
@@ -26,7 +27,7 @@ class Database:
             return await cls.__fetch(compiled_query, connection, depth + 1)
 
     @classmethod
-    async def __execute(cls, compiled_query: str, connection: Con = None, depth: int = 0) -> None:
+    async def __execute(cls, compiled_query: str, connection: Connection_ = None, depth: int = 0) -> None:
         try:
             await (connection or DatabasePool.get_pool()).execute(compiled_query)
         except (CannotConnectNowError, ConnectionDoesNotExistError, ConnectionRefusedError) as error:
@@ -42,7 +43,7 @@ class Database:
         query: Query,
         *,
         model: type[T] | Call[[Rec], Res] = None,
-        connection: Con = None
+        connection: Connection_ = None
     ) -> list[Rec | Res | T]:
 
         result = await cls.__fetch(Compiler.compile_query(query), connection)
@@ -61,7 +62,7 @@ class Database:
         query: Query,
         *,
         model: type[T] | Call[[Rec], Res] = None,
-        connection: Con = None
+        connection: Connection_ = None
     ) -> Rec | Res | T | None:
 
         result = await cls.__fetch(compiled_query := Compiler.compile_query(query), connection)
@@ -81,9 +82,13 @@ class Database:
         return model(result[0])
 
     @classmethod
-    async def execute(cls, query: Query, connection: Con = None) -> None:
+    async def execute(cls, query: Query, connection: Connection_ = None) -> None:
         await cls.__execute(Compiler.compile_query(query), connection)
 
     @classmethod
     def transaction(cls) -> Transaction:
         return Transaction()
+
+    @classmethod
+    def connection(cls) -> Connection:
+        return Connection()
