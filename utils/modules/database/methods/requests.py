@@ -6,46 +6,47 @@ from sqlalchemy.dialects.postgresql import Insert as _Insert
 from sqlalchemy.sql._typing import _ColumnsClauseArgument as Columns
 
 from utils.modules.database.methods.database import Database
+from utils.modules.database.methods.pool import DatabasePool
 from utils.modules.database.schemes.database import T, Result
 
 
 class Select(Select_):
 
     @overload
-    async def fetch(self, connection: Connection, *, model: type[T]) -> list[T]:
+    async def fetch(self, connection: Connection | DatabasePool, *, model: type[T]) -> list[T]:
         ...
 
     @overload
-    async def fetch(self, connection: Connection, *, model: Callable[[Record], Result]) -> list[Result]:
+    async def fetch(self, connection: Connection | DatabasePool, *, model: Callable[[Record], Result]) -> list[Result]:
         ...
 
     @overload
-    async def fetch(self, connection: Connection, *, model: None = None) -> list[Record]:
+    async def fetch(self, connection: Connection | DatabasePool, *, model: None = None) -> list[Record]:
         ...
 
     async def fetch(
         self,
-        connection: Connection,
+        connection: Connection | DatabasePool,
         *,
         model: type[T] | Callable[[Record], Result] = None
     ) -> list[Record | Result | T]:
         return await Database.fetch(self, model=model, connection=connection)
 
     @overload
-    async def fetch_one(self, connection: Connection, *, model: type[T]) -> T | None:
+    async def fetch_one(self, connection: Connection | DatabasePool, *, model: type[T]) -> T | None:
         ...
 
     @overload
-    async def fetch_one(self, connection: Connection, *, model: Callable[[Record], Result]) -> Result | None:
+    async def fetch_one(self, connection: Connection | DatabasePool, *, model: Callable[[Record], Result]) -> Result | None:
         ...
 
     @overload
-    async def fetch_one(self, connection: Connection, *, model: None = None) -> Record | None:
+    async def fetch_one(self, connection: Connection | DatabasePool, *, model: None = None) -> Record | None:
         ...
 
     async def fetch_one(
         self,
-        connection: Connection,
+        connection: Connection | DatabasePool,
         *,
         model: type[T] | Callable[[Record], Result] = None
     ) -> Record | Result | T | None:
@@ -54,30 +55,35 @@ class Select(Select_):
 
 class Update(Update_):
 
-    async def execute(self, connection: Connection) -> None:
+    async def execute(self, connection: Connection | DatabasePool) -> None:
         await Database.execute(self, connection=connection)
 
 
 class Insert(_Insert):
 
-    async def execute(self, connection: Connection) -> None:
+    async def execute(self, connection: Connection | DatabasePool) -> None:
         await Database.execute(self, connection=connection)
 
     @overload
-    async def returning(self, connection: Connection, *cols: Columns, model: type[T]) -> T | None:
+    async def returning(self, connection: Connection | DatabasePool, *cols: Columns, model: type[T]) -> T | None:
         ...
 
     @overload
-    async def returning(self, connection: Connection, *cols: Columns, model: Callable[[Record], Result]) -> Result | None:
+    async def returning(
+        self,
+        connection: Connection | DatabasePool,
+        *cols: Columns,
+        model: Callable[[Record], Result]
+    ) -> Result | None:
         ...
 
     @overload
-    async def returning(self, connection: Connection, *cols: Columns, model: None = None) -> Record | None:
+    async def returning(self, connection: Connection | DatabasePool, *cols: Columns, model: None = None) -> Record | None:
         ...
 
     async def returning(
         self,
-        connection: Connection,
+        connection: Connection | DatabasePool,
         *cols: Columns,
         model: type[T] | Callable[[Record], Result] = None
     ) -> Record | Result | T | None:
@@ -86,5 +92,5 @@ class Insert(_Insert):
 
 class Delete(Delete_):
 
-    async def execute(self, connection: Connection) -> None:
+    async def execute(self, connection: Connection | DatabasePool) -> None:
         await Database.execute(self, connection=connection)

@@ -33,6 +33,9 @@ class DatabasePool:
         await self.__pool.close()
         logger.debug(f'База данных {self.__data.name} отключена')
 
+    def get_pool(self) -> Pool:
+        return self.__pool
+
     def get_transaction(self) -> Transaction:
         return Transaction(self.__pool.acquire())
 
