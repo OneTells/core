@@ -86,8 +86,8 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
 
             background_tasks.add_task(set_value_in_storage, key, result_decoded, expire)
 
-            response.headers["Cache-Control"] = f"max-age={expire}"
-            response.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
+            result.headers["Cache-Control"] = f"max-age={expire}"
+            result.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
 
             return result
 
