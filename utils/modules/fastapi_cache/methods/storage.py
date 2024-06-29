@@ -11,7 +11,7 @@ class Storage(ABC):
 
     @classmethod
     @abstractmethod
-    async def set(cls, key: str, value: bytes, expire: int | None = 0) -> None:
+    async def set(cls, key: str, value: bytes, expire: int | None = None) -> None:
         raise NotImplementedError
 
 
@@ -25,11 +25,11 @@ class MemoryStorage(Storage):
         if not value:
             return
 
-        if (ttl := value[1] - int(time.time())) >= 0:
+        if (ttl := (value[1] - int(time.time()))) >= 0:
             return ttl, value[0]
 
         del cls.__storage[key]
 
     @classmethod
-    async def set(cls, key: str, value: bytes, expire: int | None = 0) -> None:
-        cls.__storage[key] = (value, int(time.time()) + expire)
+    async def set(cls, key: str, value: bytes, expire: int | None = None) -> None:
+        cls.__storage[key] = (value, int(time.time()) + expire or 0)
