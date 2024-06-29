@@ -29,7 +29,7 @@ class MemoryStorage(Storage):
             return
 
         if (ttl := value[1] - int(time.time())) >= 0:
-            return ttl, value[2]
+            return ttl, value[0]
 
         del cls.__storage[key]
 
