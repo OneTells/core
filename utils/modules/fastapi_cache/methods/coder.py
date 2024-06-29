@@ -4,8 +4,6 @@ from abc import abstractmethod, ABC
 import orjson
 from fastapi.responses import Response
 
-from utils.modules.fastapi_cache.objects import logger
-
 
 class Coder[T](ABC):
 
@@ -43,8 +41,5 @@ class ResponseCoder(Coder[Response]):
         response.media_type = obj['media_type']
         response.raw_headers = [(base64.b64decode(k.encode()), base64.b64decode(v.encode())) for k, v in obj['raw_headers']]
         response.status_code = obj['status_code']
-
-        logger.info(f"Response: {response}")
-        logger.info(f"Response: {response.raw_headers}")
 
         return response

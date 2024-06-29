@@ -1,8 +1,6 @@
 import time
 from abc import ABC, abstractmethod
 
-from utils.modules.fastapi_cache.objects import logger
-
 
 class Storage(ABC):
 
@@ -22,7 +20,6 @@ class MemoryStorage(Storage):
 
     @classmethod
     async def get(cls, key: str) -> tuple[int, bytes] | None:
-        logger.info(f'{cls.__storage}')
         value = cls.__storage.get(key)
 
         if not value:

@@ -52,6 +52,8 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                 logger.warning(f'Не удалось взять данные из хранилища: {error}')
                 data_from_storage = None
 
+            logger.info(f'key: {key}, data_from_storage: {data_from_storage}')
+
             if data_from_storage is not None:
                 ttl, value_from_storage = data_from_storage
 
