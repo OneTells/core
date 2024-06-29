@@ -41,7 +41,7 @@ class ResponseCoder(Coder[Response]):
 
         response.body = base64.b64decode(obj['content'].encode())
         response.media_type = obj['media_type']
-        response.raw_headers = [(base64.b64decode(k.decode()), base64.b64decode(v.decode())) for k, v in obj['raw_headers']]
+        response.raw_headers = [(base64.b64decode(k.encode()), base64.b64decode(v.encode())) for k, v in obj['raw_headers']]
         response.status_code = obj['status_code']
 
         logger.info(f"Response: {response}")
