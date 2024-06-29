@@ -67,7 +67,7 @@ def edit_function_signature(func: Callable) -> tuple[tuple[str, bool], tuple[str
 
     if background_tasks_parameter is None:
         parameters.append(
-            response_parameter := Parameter(
+            background_tasks_parameter := Parameter(
                 name="background_tasks",
                 annotation=BackgroundTasks,
                 kind=Parameter.KEYWORD_ONLY
