@@ -5,15 +5,16 @@ from typing import Callable, Awaitable
 from fastapi import BackgroundTasks
 from fastapi.requests import Request
 from fastapi.responses import Response
+from fastapi.utils import is_body_allowed_for_status_code
 
-from utils.modules.fastapi_cache.methods.auxiliary import edit_function_signature, run_function, set_value_in_storage, answer
+from utils.modules.fastapi_cache.methods.auxiliary import edit_function_signature, run_function, set_value_in_storage
 from utils.modules.fastapi_cache.methods.coder import Coder
 from utils.modules.fastapi_cache.methods.key_builder import KeyBuilder
 from utils.modules.fastapi_cache.methods.setting import Settings
 from utils.modules.fastapi_cache.objects import logger
 
 
-def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: type[KeyBuilder] = None):
+def cache[** P, R: Response](expire: int = None, coder: type[Coder] = None, key_builder: type[KeyBuilder] = None):
     def wrapper(func: Callable[P, Awaitable[R] | R]) -> Callable[P, Awaitable[R]]:
         (
             (request_name, is_add_request),
@@ -22,7 +23,7 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
         ) = edit_function_signature(func)
 
         @wraps(func)
-        async def inner(**kwargs: P.kwargs) -> R:
+        async def inner(**kwargs: P.kwargs) -> R | None:
             clear_kwargs = kwargs.copy()
 
             if is_add_request:
@@ -42,7 +43,6 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
             if request.headers.get("Cache-Control") in ("no-store", "no-cache"):
                 return await run_function(func, kwargs)
 
-            response: Response = clear_kwargs.pop(response_name)
             background_tasks: BackgroundTasks = clear_kwargs.pop(background_tasks_name)
 
             key = (key_builder or Settings.key_builder).build(func, kwargs=clear_kwargs)
@@ -53,21 +53,17 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                 logger.warning(f'Не удалось взять данные из хранилища: {error}')
                 data_from_storage = None
 
-            logger.info(f'key: {key}, data_from_storage: {data_from_storage}')
-
             if data_from_storage is not None:
                 ttl, value_from_storage = data_from_storage
-
-                response.headers["Cache-Control"] = f"max-age={ttl}"
 
                 old_etag = request.headers.get("if-none-match", None)
                 new_etag = f"W/{hashlib.sha256(value_from_storage).hexdigest()}"
 
                 if old_etag == new_etag:
+                    response: Response = clear_kwargs.pop(response_name)
+                    response.headers["Cache-Control"] = f"max-age={ttl}"
                     response.status_code = 304
                     return
-
-                response.headers["ETag"] = new_etag
 
                 try:
                     result = (coder or Settings.coder).decode(value_from_storage)
@@ -75,9 +71,16 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                     logger.warning(f'Не удалось сериализовать данные: {error}')
                     result = await run_function(func, kwargs)
 
-                return answer(result, response)
+                response = result if isinstance(result, Response) else clear_kwargs.pop(response_name)
+                response.headers["Cache-Control"] = f"max-age={ttl}"
+                response.headers["ETag"] = new_etag
+
+                return result
 
             result = await run_function(func, kwargs)
+
+            if isinstance(result, Response) and not is_body_allowed_for_status_code(result.status_code):
+                result.body = b""
 
             try:
                 result_decoded = (coder or Settings.coder).encode(result)
@@ -87,10 +90,10 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
 
             background_tasks.add_task(set_value_in_storage, key, result_decoded, expire)
 
-            response.headers["Cache-Control"] = f"max-age={expire}"
-            response.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
+            result.headers["Cache-Control"] = f"max-age={expire}"
+            result.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
 
-            return answer(result, response)
+            return result
 
         return inner
 
