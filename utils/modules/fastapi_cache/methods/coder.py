@@ -9,19 +9,19 @@ class Coder[T](ABC):
 
     @classmethod
     @abstractmethod
-    def dumps(cls, value: T) -> bytes:
+    def encode(cls, value: T) -> bytes:
         raise NotImplementedError
 
     @classmethod
     @abstractmethod
-    def loads(cls, value: bytes) -> T:
+    def decode(cls, value: bytes) -> T:
         raise NotImplementedError
 
 
 class ResponseCoder(Coder[Response]):
 
     @classmethod
-    def dumps(cls, value: Response) -> bytes:
+    def encode(cls, value: Response) -> bytes:
         obj = {
             'content': base64.b64encode(value.body).decode(),
             'media_type': value.media_type,
@@ -32,7 +32,7 @@ class ResponseCoder(Coder[Response]):
         return orjson.dumps(obj)
 
     @classmethod
-    def loads(cls, value: bytes) -> Response:
+    def decode(cls, value: bytes) -> Response:
         obj = orjson.loads(value)
 
         response = Response()

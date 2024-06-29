@@ -67,9 +67,9 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                     return
 
                 response.headers["ETag"] = new_etag
-
+                print(response.headers)
                 try:
-                    return (coder or Settings.coder).loads(value_from_storage)
+                    return (coder or Settings.coder).decode(value_from_storage)
                 except Exception as error:
                     logger.warning(f'Не удалось сериализовать данные: {error}')
 
@@ -78,7 +78,7 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
             result = await run_function(func, kwargs)
 
             try:
-                result_decoded = (coder or Settings.coder).dumps(result)
+                result_decoded = (coder or Settings.coder).encode(result)
             except Exception as error:
                 logger.warning(f'Не удалось сериализовать данные: {error}')
                 return result
