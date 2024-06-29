@@ -6,7 +6,7 @@ from fastapi import BackgroundTasks
 from fastapi.requests import Request
 from fastapi.responses import Response
 
-from utils.modules.fastapi_cache.methods.auxiliary import edit_function_signature, run_function, set_value_in_storage
+from utils.modules.fastapi_cache.methods.auxiliary import edit_function_signature, run_function, set_value_in_storage, answer
 from utils.modules.fastapi_cache.methods.coder import Coder
 from utils.modules.fastapi_cache.methods.key_builder import KeyBuilder
 from utils.modules.fastapi_cache.methods.setting import Settings
@@ -68,13 +68,14 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                     return
 
                 response.headers["ETag"] = new_etag
-                logger.info(response.headers)
+
                 try:
-                    return (coder or Settings.coder).decode(value_from_storage)
+                    result = (coder or Settings.coder).decode(value_from_storage)
                 except Exception as error:
                     logger.warning(f'Не удалось сериализовать данные: {error}')
+                    result = await run_function(func, kwargs)
 
-                return await run_function(func, kwargs)
+                return answer(result, response)
 
             result = await run_function(func, kwargs)
 
@@ -86,10 +87,10 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
 
             background_tasks.add_task(set_value_in_storage, key, result_decoded, expire)
 
-            result.headers["Cache-Control"] = f"max-age={expire}"
-            result.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
+            response.headers["Cache-Control"] = f"max-age={expire}"
+            response.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
 
-            return result
+            return answer(result, response)
 
         return inner
 

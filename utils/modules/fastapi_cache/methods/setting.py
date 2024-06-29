@@ -4,9 +4,9 @@ from utils.modules.fastapi_cache.methods.storage import Storage, MemoryStorage
 
 
 class Settings:
-    coder: type[Coder] = ResponseCoder
-    key_builder: type[KeyBuilder] = DefaultKeyBuilder
-    storage: type[Storage] = MemoryStorage
+    coder: type[Coder]
+    key_builder: type[KeyBuilder]
+    storage: type[Storage]
 
     @classmethod
     def set(cls, *, coder: type[Coder] = None, key_builder: type[KeyBuilder] = None, storage: type[Storage] = None):

@@ -1,12 +1,13 @@
 import asyncio
 import inspect
 from inspect import Parameter
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Any
 
 from fastapi import BackgroundTasks
 from fastapi.concurrency import run_in_threadpool
 from fastapi.requests import Request
-from fastapi.responses import Response
+from fastapi.utils import is_body_allowed_for_status_code
+from starlette.responses import Response
 
 from utils.modules.fastapi_cache.methods.setting import Settings
 from utils.modules.fastapi_cache.objects import logger
@@ -17,6 +18,17 @@ async def run_function[** P, R](func: Callable[P, Awaitable[R] | R], kwargs: P) 
         return await func(**kwargs)
 
     return await run_in_threadpool(func, **kwargs)
+
+
+def answer(result: Response | Any, response: Response) -> Response | Any:
+    if not isinstance(result, Response):
+        return result
+
+    if not is_body_allowed_for_status_code(result.status_code):
+        result.body = b""
+
+    result.headers.raw.extend(response.headers.raw)
+    return result
 
 
 def edit_function_signature(func: Callable) -> tuple[tuple[str, bool], tuple[str, bool], tuple[str, bool]]:
