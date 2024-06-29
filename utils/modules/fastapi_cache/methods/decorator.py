@@ -62,12 +62,14 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                 old_etag = request.headers.get("if-none-match", None)
                 new_etag = f"W/{hash(value_from_storage)}"
 
+                print(response.headers)
+
                 if old_etag == new_etag:
                     response.status_code = 304
                     return
 
                 response.headers["ETag"] = new_etag
-                print(response.headers)
+
                 try:
                     return (coder or Settings.coder).decode(value_from_storage)
                 except Exception as error:
