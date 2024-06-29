@@ -1,3 +1,4 @@
+import hashlib
 from functools import wraps
 from typing import Callable, Awaitable
 
@@ -60,9 +61,7 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
                 response.headers["Cache-Control"] = f"max-age={ttl}"
 
                 old_etag = request.headers.get("if-none-match", None)
-                new_etag = f"W/{hash(value_from_storage)}"
-
-                logger.info(response.headers)
+                new_etag = f"W/{hashlib.sha256(value_from_storage).hexdigest()}"
 
                 if old_etag == new_etag:
                     response.status_code = 304
@@ -88,7 +87,7 @@ def cache[R, ** P](expire: int = None, coder: type[Coder] = None, key_builder: t
             background_tasks.add_task(set_value_in_storage, key, result_decoded, expire)
 
             response.headers["Cache-Control"] = f"max-age={expire}"
-            response.headers["ETag"] = f"W/{hash(result_decoded)}"
+            response.headers["ETag"] = f"W/{hashlib.sha256(result_decoded).hexdigest()}"
 
             return result
 
